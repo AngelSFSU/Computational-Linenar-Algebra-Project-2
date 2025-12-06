@@ -3,7 +3,6 @@ import pandas as pd
 from sklearn.metrics import accuracy_score
 
 def load_data(file_path):
-    """Loads the data from a text file and reshapes it to (N examples, 400 features)."""
     try:
         data_flat = np.loadtxt(file_path, delimiter=',', dtype=np.float64)
         if 'training_set' in file_path:
@@ -19,7 +18,6 @@ def load_data(file_path):
         return None
 
 def load_labels(file_path, map_10_to_0=True):
-    """Loads labels and optionally maps the label '10' (for digit 0) to '0'."""
     try:
         labels = np.loadtxt(file_path, dtype=np.int32)
         if map_10_to_0:
@@ -30,13 +28,6 @@ def load_labels(file_path, map_10_to_0=True):
         return None
 
 def calculate_svd_residuals(test_vector, V_bases, k):
-    """
-    Calculates the reconstruction residuals for a given test vector against all 10
-    class subspaces, using k basis vectors.
-
-    Returns:
-        np.array: Array of residuals for digits 0 through 9.
-    """
     residuals = {}
     for digit, V in V_bases.items():
         V_k = V[:, :k]
@@ -50,20 +41,7 @@ def calculate_svd_residuals(test_vector, V_bases, k):
 
 
 def classify_two_stage(test_vector, V_bases, k_fallback, threshold):
-    """
-    Implements the two-stage classification algorithm:
-    Stage 1 (k=1 check) -> Stage 2 (k=k_fallback) if ambiguous.
 
-    Args:
-        test_vector (np.array): The vector to classify.
-        V_bases (dict): SVD right-singular vectors for each class.
-        k_fallback (int): The k value to use in Stage 2 (e.g., k=20 from Part A).
-        threshold (float): The threshold for 'significantly smaller'. Residual 1 must be
-                           less than (1 - threshold) * Residual 2. (e.g., 0.5 for 50% smaller).
-
-    Returns:
-        tuple: (predicted_digit, stage_used_int, r1_min, r2_next, d1_min, d2_next)
-    """
     residuals_1 = calculate_svd_residuals(test_vector, V_bases, k=1)
     
     sorted_indices = np.argsort(residuals_1)
@@ -87,9 +65,7 @@ def classify_two_stage(test_vector, V_bases, k_fallback, threshold):
     return predicted_digit, stage_used_int, r1_min, r2_next, d1_min, d2_next
 
 def run_two_stage_experiment(test_data, true_labels, V_bases, k_fallback, threshold):
-    """
-    Runs the Part B two-stage classification and returns detailed results for process visibility.
-    """
+    
     predictions = []
     stage_used = []
     r1_min_list = []

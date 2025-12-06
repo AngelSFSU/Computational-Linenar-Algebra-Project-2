@@ -3,7 +3,6 @@ import pandas as pd
 from sklearn.metrics import confusion_matrix, accuracy_score
 
 def load_data(file_path):
-    """Loads the data from a text file and reshapes it to (N examples, 400 features)."""
     try:
         data_flat = np.loadtxt(file_path, delimiter=',', dtype=np.float64)
         
@@ -22,10 +21,6 @@ def load_data(file_path):
         return None
 
 def load_labels(file_path, map_10_to_0=True):
-    """
-    Loads labels. Maps the label '10' (used for digit 0 in MATLAB/Project) to '0' 
-    for standard Python analysis if map_10_to_0 is True.
-    """
     try:
         labels = np.loadtxt(file_path, dtype=np.int32)
         if map_10_to_0:
@@ -37,19 +32,6 @@ def load_labels(file_path, map_10_to_0=True):
         return None
 
 def classify_svd(test_vector, V_bases, k):
-    """
-    Classifies a single test vector based on the minimum reconstruction residual
-    using a rank-k approximation (k basis vectors). [Image of Singular Value Decomposition of a matrix]
-
-    Args:
-        test_vector (np.array): The 400-dimensional vector to classify.
-        V_bases (dict): A dictionary mapping digit (0-9) to its full SVD right-singular
-                        vectors matrix (V).
-        k (int): The number of singular vectors to use for the basis (rank-k approximation).
-
-    Returns:
-        int: The predicted digit (0-9).
-    """
     residuals = {}
     for digit, V in V_bases.items():
         V_k = V[:, :k]
@@ -65,7 +47,6 @@ def classify_svd(test_vector, V_bases, k):
 
 
 def run_classification_experiment(test_data, true_labels, V_bases, k_values):
-    """Runs Part A classification for a list of k values and returns results."""
     results = {}
     
     for k in k_values:
@@ -85,7 +66,6 @@ def run_classification_experiment(test_data, true_labels, V_bases, k_values):
     return results
 
 def analyze_singular_values(singular_values):
-    """Performs Task A.iii analysis: singular value decay and energy."""
     svd_summary = {}
     for digit in range(10):
         S = singular_values[digit]
